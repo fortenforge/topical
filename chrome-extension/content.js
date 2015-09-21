@@ -1,34 +1,43 @@
-console.log("ready to play");
-var text = $("body").text();
-var xhr = new XMLHttpRequest();
-
-var reqString = "We're rolling out the red carpet for Sunday's Emmy Awards – but you don't even need to change out of your sweatpants. Starting at 6:30 p.m. (ET), watch your favorite TV actors – from Uzo Aduba to Amy Schumer to Jon Hamm – arrive in their red carpet best (which will make your sweatpants seem that much more comfortable). \\ We'll also be keeping up with all the latest Emmys news – from big winners to gown details to performances to all the outrageous moments in between (hello, Amy!) – throughout the show. And we want to hear from you, too: Tweet along with us @people, where we'll be dishing on all the Emmys action, funny acceptance speeches and more. "
-xhr.open("POST", "https://play-hackmit.rhcloud.com/content/", true);
-xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-xhr.send("content=helloworld&images=images");
-
-x = xhr.responseText
-console.log("hello world")
-console.log(xhr.responseText);
-
-// chrome.runtime.sendMessage({message: "isMusicPlaying"}, function(response) {
-//
-// 	console.log(response);
-//
-//   if (response.message === false) {
-//   	console.log("ready to play");
-//   	var text = $("body").text();
-// 	  var xhr = new XMLHttpRequest();
-//
-// 	  var reqString = "We're rolling out the red carpet for Sunday's Emmy Awards – but you don't even need to change out of your sweatpants. Starting at 6:30 p.m. (ET), watch your favorite TV actors – from Uzo Aduba to Amy Schumer to Jon Hamm – arrive in their red carpet best (which will make your sweatpants seem that much more comfortable). \\ We'll also be keeping up with all the latest Emmys news – from big winners to gown details to performances to all the outrageous moments in between (hello, Amy!) – throughout the show. And we want to hear from you, too: Tweet along with us @people, where we'll be dishing on all the Emmys action, funny acceptance speeches and more. "
-// 	  xhr.open("GET", "http://play-hackmit.rhcloud.com/content/?content=" + encodeURI(reqString), false);
-// 	  xhr.send();
-//
-// 	  var result = xhr.responseText;
-// 	  console.log(result);
-//  	  chrome.runtime.sendMessage({message : "musicStarted"}, function(response) {
-//     });
-//  	}
-//  	return;
-// });
-
+chrome.runtime.sendMessage({message: "isMusicPlaying"}, function(response) {
+  console.log(response);
+    if (response.message !== undefined) {
+      console.log("ready to play");
+      var images = document.getElementsByTagName('img');
+    var srcList = [];
+    for(var i = 0; i < images.length; i++) {
+        srcList.push(images[i].src);
+    }
+    var htmlText = $("body").html();
+    var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance
+    var responseText;
+    xmlhttp.onreadystatechange=function() {
+      if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+        responseText = xmlhttp.responseText;
+        console.log(responseText);
+        chrome.runtime.sendMessage({message : "musicStarted"}, function(response) {
+          console.log(responseText);
+          var iframe_div = document.createElement('div');
+          iframe_div.setAttribute("style", "style='position:relative;width:100%'")
+          var iframe = document.createElement('iframe');
+          iframe_div.setAttribute("z-index", "9999");
+          iframe.setAttribute("z-index", "9999");
+          iframe.setAttribute("style", "position: relative;right:0;top:0");
+          iframe.src = "https://embed.spotify.com/?uri=spotify:track:" + responseText;
+          document.body.insertBefore(iframe_div, document.body.firstChild);
+          iframe_div.appendChild(iframe);
+        });
+      }
+    }
+    //xmlhttp.open("POST", "http://play-hackmit.rhcloud.com/content/", true);
+    xmlhttp.open("POST", "http://127.0.0.1:5000/content/"), true;
+    xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    console.log(srcList);
+    console.log(encodeURIComponent(srcList));
+    thing = encodeURIComponent(srcList)
+    if(srcList.length == 0) {
+      thing = ""
+    }
+    xmlhttp.send("content=" + encodeURIComponent(htmlText) + "&images=" + thing);
+  }
+  return;
+});
