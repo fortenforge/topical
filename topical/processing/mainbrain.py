@@ -24,11 +24,13 @@ def getTagsFromImages(images):
 
 #  def chooseSong(text, images):
 def chooseSong(text):
-    print "HELLO NG WORLD"
-    text = html2text.html2text(text);
+    print "Selecting Song"
+    # print "Converting to text"
+    # text = html2text.html2text(text);
+    print text
+    print "Finding Keywords:"
     keywords = identify.identify_keywords(text)
     print keywords
-    keywords = identify.identify_keywords(text)
 #     answers = getTagsFromImages(images)
 #     for key in answers:
 #         if (key in keywords):
@@ -37,8 +39,11 @@ def chooseSong(text):
 # 	          keywords[key] = answers[key]
     wordlist = sorted(keywords.keys(), key = lambda x : -keywords[x])
     wordlist = wordlist[:10]
+    print "Finding relevant songs"
     songs = spotify.full_process(wordlist)
+    print "Finding lyrics"
     song = scraper.computeSong(songs, keywords)
+    print "Final Song:"
     print song[0] + " by " +  song[1]
   #   stuff = requests.get("http://api.musixmatch.com/ws/1.1/track.search?apikey=" + environ.get("MUSIX_API_KEY") + "&q_track=" + song[0] + "&q_artist=" + song[1])
   #   stuff = stuff.json()
@@ -47,4 +52,3 @@ def chooseSong(text):
   #   return stuff
     return song[3]
 
-# print chooseSong("Two days after asserting that President Barack Obama was a foreign-born Muslim, a guy who asked Donald Trump a provocative question at a New Hampshire rally is now the front-runner in the Republican race for President, according to a new poll. The poll, which was conducted by the University of Minnesota's Opinion Research Institute, shows Muslim Question Guy leading the G.O.P field with thirty-four per cent as opposed to nineteen percent for Trump.")

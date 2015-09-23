@@ -7,7 +7,7 @@ chrome.runtime.sendMessage({message: "isMusicPlaying"}, function(response) {
     for(var i = 0; i < images.length; i++) {
         srcList.push(images[i].src);
     }
-    var htmlText = $("body").html();
+    var htmlText = $("p").text();
     var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance
     var responseText;
     xmlhttp.onreadystatechange=function() {
@@ -16,15 +16,10 @@ chrome.runtime.sendMessage({message: "isMusicPlaying"}, function(response) {
         console.log(responseText);
         chrome.runtime.sendMessage({message : "musicStarted"}, function(response) {
           console.log(responseText);
-          var iframe_div = document.createElement('div');
-          iframe_div.setAttribute("style", "style='position:relative;width:100%'")
           var iframe = document.createElement('iframe');
-          iframe_div.setAttribute("z-index", "9999");
-          iframe.setAttribute("z-index", "9999");
-          iframe.setAttribute("style", "position: relative;right:0;top:0");
+          iframe.setAttribute("style", "position:fixed;bottom:0;right:0;height:80px;border:none;z-index:9999;")
           iframe.src = "https://embed.spotify.com/?uri=spotify:track:" + responseText;
-          document.body.insertBefore(iframe_div, document.body.firstChild);
-          iframe_div.appendChild(iframe);
+          document.body.insertBefore(iframe, document.body.firstChild);
         });
       }
     }
